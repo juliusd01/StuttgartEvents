@@ -1,13 +1,3 @@
-# deccob
-Analysing event data for Stuttgart
-
-### Main Question to answer: Where in Stuttgart is agood place to go out at wednesdays?
-
-
-
-## json data for one event
-
-```json
 {
     "id": "prinz.de/stuttgart/events/515144-gedenktag-fuer-die-verstorbenen-drogenabhaeng-1",
     "eventData": {
@@ -66,7 +56,3 @@ Analysing event data for Stuttgart
     "sourceDate": "2015-09-17T10:29:52.5326587", 
     "ticket": null}, 
 "hostname": "prinz.de"}
-```
-
-### Reducing amount of data 
-We are only interested in places that are open on Wednesdays or events which take place on Wednesday. It might be actually cool, to also set a date in the dashboard, and then we could recommend some special events that take place only once. 
