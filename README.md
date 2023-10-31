@@ -1,7 +1,7 @@
 # deccob
 Analysing event data for Stuttgart
 
-### Main Question to answer: Where in Stuttgart is agood place to go out at wednesdays?
+### Main Question to answer: Where in Stuttgart is a good place to go out at wednesdays?
 
 
 
