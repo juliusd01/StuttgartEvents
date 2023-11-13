@@ -203,6 +203,23 @@ def dislpay_frequent_words_from_description(df: pd.DataFrame):
     # Display the figure in Streamlit
     st.pyplot(fig)
 
+# Diagramm
+def generate_activity_type_chart(df: pd.DataFrame):
+    st.markdown("&nbsp;")
+    st.title("Activity Type Distribution 📊")
+
+    # Zahlen rechnen
+    activity_counts = df['supercategory'].value_counts()
+
+    # Diagramm malen
+    fig, ax = plt.subplots()
+    activity_counts.plot(kind='bar', ax=ax)
+    ax.set_xlabel('Activity Type')
+    ax.set_ylabel('Number of Events')
+    ax.set_title('Distribution of Activity Types')
+
+    # Diagramm zeigen
+    st.pyplot(fig)
 
 
 
@@ -220,12 +237,10 @@ def main():
     display_wordcloud_with_colnames(df)
     dislpay_frequent_words_from_description(df)
 
-
-
+    generate_activity_type_chart(df)
 
     st.markdown('&nbsp;')
     st.markdown('<div style="text-align:center;">Copyright © 2023 Julius Döbelt and Haoran Huang. All rights reserved.</div>', unsafe_allow_html=True)
-
 
 if __name__ == "__main__":
     main()
