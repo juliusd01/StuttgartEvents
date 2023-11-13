@@ -11,4 +11,5 @@ If you can run the application take a look at the walkthrough of the stramlit ap
 
 # Next Steps
 - Include time preference in displaying locations
+ --> For doing the above, there needs to be a mapping from start_time to [morning, afternoon, evening]. This should be displayed as options as well.
 - maybe add meme for people who dont have time: https://ifunny.co/video/oktoberfest-sitting-in-stuttgart-for-those-who-don-t-understand-pvD633rrA?s=cl
