@@ -339,7 +339,7 @@ def main():
     display_locations(df, selected_tab, event_type, location_sidebar, season, preferred_time)
     show_no_of_events_used(df)
     generate_latitude_longitude_chart(df)
-    #dislpay_frequent_words_from_description(df)
+    dislpay_frequent_words_from_description(df)
     generate_activity_type_chart(df)
     generate_activity_type_pie_chart(df)
     visualize_subcategory_by_supercategory(df)
