@@ -11,6 +11,7 @@ Deployed at: https://animated-halibut-6q9j97wpxwp3qv5-8501.app.github.dev/
 ## ToDos
 - Sentiment Analyse
 - Event Description mehr nutzen
+- Bei den Plots für die subcategories der supercategories, relativen Anteil nutzen.
 
 
 ## Präsentation
