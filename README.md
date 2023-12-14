@@ -4,9 +4,7 @@ Analysing event data for Stuttgart
 ### Main Question to answer: Where in Stuttgart is a good place to go out at wednesdays?
 
 ## Video
-If you can run the application take a look at the walkthrough of the stramlit application at https://youtu.be/Oi3mRMuW7Xk. 
-
-Deployed at: https://animated-halibut-6q9j97wpxwp3qv5-8501.app.github.dev/
+If you can't run the application take a look at the walkthrough of the stramlit application at https://youtu.be/Oi3mRMuW7Xk (05.11.2023). 
 
 ## ToDos
 - Sentiment Analyse
@@ -16,3 +14,7 @@ Deployed at: https://animated-halibut-6q9j97wpxwp3qv5-8501.app.github.dev/
 
 ## Präsentation
 - plots für das gesamte dataset zeigen, nicht nur subset
+
+## Total number of events
+264395
+
