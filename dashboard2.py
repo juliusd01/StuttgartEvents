@@ -36,20 +36,20 @@ def get_user_preferences():
         ['spring', 'summer', 'autumn', 'winter']
     )
 
-    preferred_time = st.sidebar.multiselect(
-        "Select your preferred time:",
-        ["Morning", "Afternoon", "Evening", "Night"],
-        ["Morning", "Afternoon", "Evening", "Night"]
-        )
-
     # Create a multiselect widget for the type of event
     event_type = st.sidebar.multiselect(
         'Which type of event do you prefer?',
-        ['konzert', 'kultur', 'stadtleben', 'party', 'anderes'],
-        ['konzert', 'party']
+        ['kultur', 'anderes', 'party', 'stadtleben', 'familie-kinder', 'konzert', 'sport', 'Radio Station', 'Local business', 'Local Business', 'University', 'Radio station', 'City', 'Lawyer', 'Club', 'Bank', 'Energy', 'Media', 'Non-Profit Organization', 'Internet', 'Movie Theater', 'Business Services', 'Hotel', 'Biotechnology', 'Shopping', 'Restaurant', 'Arts', 'Travel', 'Business services', 'Non-profit organization', 'Library', 'Automobiles and parts', 'Consulting', 'Museum', 'Food', 'Sports venue', 'Movie theater', 'Non-Governmental Organization (NGO)', 'Bar', 'Political organization', 'Spas', 'Concert Venue', 'Company', 'Sports Team', 'Retail and Consumer Merchandise', 'Sports', 'Book Store', 'Health', 'Church', 'Sports Venue', 'Landmark', 'Organization', 'Outdoor gear', 'Concert venue', 'Education', 'School', 'Community Organization', 'Public places', 'Small Business', 'Attractions', 'Transit stop', 'Government organization', 'Event Planning', 'Tours', 'Pet Services', 'Public Places', 'Record label', 'Professional Services', 'Community organization', 'Computers', 'Political Organization', 'Community', 'Tattoo & Piercing Shop', 'Legal', 'Movie Character', 'Greek Restaurant', 'Interest', 'Dance & Night Club', 'TV Network', 'Amateur Sports Team', 'Park', 'Lounge', 'Arts & Entertainment', 'Elementary School', 'Stadium, Arena & Sports Venue', 'Campus Building', 'Landmark & Historical Place', 'Food Wholesaler', 'History Museum', 'Nonprofit Organization', 'Education Website', 'Automotive', 'Wine, Beer & Spirits Store', 'Professional Service', 'Capitol Building', 'Comedian', 'Italian Restaurant', 'Hospital', 'Mattress Store', 'Business Service', 'Performance & Event Venue', 'Meeting Room', 'Zoo', 'College & University', 'Government Organization', 'Medical & Health', 'Catholic Church', 'German Restaurant', 'Event', 'Sports & Recreation', 'Tai Chi Studio', 'Live Music Venue', 'Personal Coach', 'Performance Venue', 'Journalist', 'Car Dealership', 'Parking Garage ', 'Cultural Center', 'Outdoor, Recreation & Fitness', 'Art Gallery', 'Event planning', 'Jazz & Blues Club', 'Cause', 'Sports Club', 'Performance Art Theatre', 'Commercial Bank', 'Wine Bar', 'Cafe', 'Public Figure', 'Alternative & Holistic Health Service', 'Consulting Agency', 'Evangelical Church', 'Senior Center', 'Yoga Studio', 'Dance Studio', 'Retail Company', 'Post Office', 'Bar & Grill', 'Auction House', 'Train Station', 'Borough', 'Gym', 'Management Service', 'Department Store', 'Musician', 'Sports team', 'Swabian Restaurant', 'Religious Organization', 'Fire Station', 'Event Space', 'Ballroom', 'Outdoor Gear', 'Florist', 'Food & Beverage', 'Tour Guide', 'Government Building', 'Retail and consumer merchandise', 'Real Estate', 'Artist', 'Shopping & Retail', 'Social Service', 'Public Service', 'Grocery Store', 'Cocktail Bar', 'Event Planning Service', 'Bookstore', 'Railway Station', 'Youth Organization', 'Product', 'Public Services & Government', 'Internet Cafe', 'Middle School', 'Mental Health Service', 'Travel Company', 'Beach', 'Convention Center', 'Medical Center', 'Education Company', 'Pizza Place'],
+        ['kultur']
     )
 
-    return event_type, location_sidebar, season, preferred_time
+    # mood = st.sidebar.multiselect(
+    #     'What should be the flair of the event?',
+    #     ['Kulturell', 'Gesellig', 'Musikalisch', 'Kreativ', 'Anderes'],
+    #     ['Kulturell', 'Gesellig', 'Musikalisch', 'Kreativ', 'Anderes']
+    # )
+
+    return event_type, location_sidebar, season
 
 
 def display_subcategories(event_types: list, df: pd.DataFrame):
@@ -73,7 +73,7 @@ def create_link_to_GoogleMaps(row):
     google_maps_address = f"https://www.google.com/maps/search/?api=1&query={row['Location']},{row['Address']}, Stuttgart"
     return f'<a href="{google_maps_address}" target="_blank">Find {row["Location"]} on Maps</a>'
 
-def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, location_sidebar: list, season: list, preferred_time: str, event_subtype: list):
+def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, location_sidebar: list, season: list, event_subtype: list):
     """ Select the data from the dataframe that corresponds to the user preferences and return a dataframe with the relevant data
     
     :param df: the dataframe with all the events
@@ -81,20 +81,19 @@ def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, lo
     :param event_type: list of event types
     :param location_sidebar: list of district names that the user selected
     :param season: list of seasons that the user selected
-    :param preferred_time: preferred time of day for user
     :param event_subtype: list of event subtypes that the user selected
     """
-    sub_df = df[df['season'].isin(season) & df['district'].isin(location_sidebar) & df['supercategory'].isin(event_type) & df['time_of_day'].isin(preferred_time) & df['subcategory'].isin(event_subtype)]
+    sub_df = df[df['season'].isin(season) & df['district'].isin(location_sidebar) & df['supercategory'].isin(event_type) & df['subcategory'].isin(event_subtype)]
     # Only select the relevant columns
-    sub_df = sub_df[['name', 'description', 'location.name', 'location.location.address.street', 'supercategory', 'subcategory']]
-    sub_df.columns = ['Event', 'Description', 'Location', 'Address', 'Type', 'Category']
+    sub_df = sub_df[['name', 'description', 'location.name', 'location.location.address.street', 'supercategory', 'subcategory', 'stimmung']]
+    sub_df.columns = ['Event', 'Description', 'Location', 'Address', 'Type', 'Category', 'Flair']
     # create a dictionary with the location as key and the address and category as values
     location_dict = {}
     for index, row in sub_df.iterrows():
         if row['Location'] not in location_dict:
-            location_dict[row['Location']] = [row['Address'], row['Type'], row['Category'], 1]
+            location_dict[row['Location']] = [row['Address'], row['Type'], row['Category'], row['Flair'], 1]
         else:
-            location_dict[row['Location']][3] += 1
+            location_dict[row['Location']][4] += 1
     # count number of events per location
     events_per_location_count_df = sub_df.groupby(['Location']).count()
     # sort by number of events per location
@@ -104,11 +103,11 @@ def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, lo
         # get the top 5 location names
         top_5_locations = events_per_location_count_df.head(5).index.tolist()
         # create a new dataframe with only the top 5 locations using the location_dict
-        top_5_locations_df = pd.DataFrame(columns=['Location', 'Address', 'Type', 'Category', 'Popularity'])
+        top_5_locations_df = pd.DataFrame(columns=['Location', 'Address', 'Type', 'Category', 'Flair', 'Popularity'])
         for location in top_5_locations:
-            star_rating = min(location_dict[location][3], 5)
-            num_of_events = location_dict[location][3]
-            new_entry = pd.DataFrame([[location, location_dict[location][0], location_dict[location][1], location_dict[location][2], star_rating*'⭐', num_of_events]], columns=['Location', 'Address', 'Type', 'Category', 'Popularity', 'Number of Events'])
+            star_rating = min(location_dict[location][4], 5)
+            num_of_events = location_dict[location][4]
+            new_entry = pd.DataFrame([[location, location_dict[location][0], location_dict[location][1], location_dict[location][2], location_dict[location][3], star_rating*'⭐', num_of_events]], columns=['Location', 'Address', 'Type', 'Category', 'Flair', 'Popularity', 'Number of Events'])
             top_5_locations_df = pd.concat([top_5_locations_df, new_entry])
         top_5_locations = top_5_locations_df.reset_index(drop=True)
         top_5_locations['Google Maps Link 📍🗺️'] = top_5_locations.apply(create_link_to_GoogleMaps, axis=1)
@@ -117,26 +116,26 @@ def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, lo
         # get all location names
         all_locations = events_per_location_count_df.index.tolist()
         # create new df with all locations using the location_dict
-        all_locations_df = pd.DataFrame(columns=['Location', 'Address', 'Type', 'Category', 'Popularity'])
+        all_locations_df = pd.DataFrame(columns=['Location', 'Address', 'Type', 'Category', 'Flair', 'Popularity'])
         for location in all_locations:
-            star_rating = min(location_dict[location][3], 5)
-            num_of_events = location_dict[location][3]
-            new_entry = pd.DataFrame([[location, location_dict[location][0], location_dict[location][1], location_dict[location][2], star_rating*'⭐', num_of_events]], columns=['Location', 'Address', 'Type', 'Category', 'Popularity', 'Number of Events'])
+            star_rating = min(location_dict[location][4], 5)
+            num_of_events = location_dict[location][4]
+            new_entry = pd.DataFrame([[location, location_dict[location][0], location_dict[location][1], location_dict[location][2], location_dict[location][3], star_rating*'⭐', num_of_events]], columns=['Location', 'Address', 'Type', 'Category', 'Flair', 'Popularity', 'Number of Events'])
             all_locations_df = pd.concat([all_locations_df, new_entry])
         all_locations = all_locations_df.reset_index(drop=True)
         all_locations['Google Maps Link 📍🗺️'] = all_locations.apply(create_link_to_GoogleMaps, axis=1)
         return all_locations
 
 
-def display_locations(df: pd.DataFrame, selected_tab: str, event_type, location_sidebar, season, preferred_time, event_subtype):
+def display_locations(df: pd.DataFrame, selected_tab: str, event_type, location_sidebar, season, event_subtype):
     if selected_tab == "Top 5 Locations":
         st.subheader('Top 5 Locations for your preferences🚀')
-        output_df = prepare_sub_df_for_output(df, top5=True, event_type=event_type, location_sidebar=location_sidebar, season=season, preferred_time=preferred_time, event_subtype=event_subtype)
+        output_df = prepare_sub_df_for_output(df, top5=True, event_type=event_type, location_sidebar=location_sidebar, season=season, event_subtype=event_subtype)
         st.write(output_df.to_html(escape=False, index=False, justify='center'), unsafe_allow_html=True)
 
     elif selected_tab == "All Locations":
         st.subheader('All locations that correspond to your preferences')
-        output_df = prepare_sub_df_for_output(df, top5=False, event_type=event_type, location_sidebar=location_sidebar, season=season, preferred_time=preferred_time, event_subtype=event_subtype)
+        output_df = prepare_sub_df_for_output(df, top5=False, event_type=event_type, location_sidebar=location_sidebar, season=season, event_subtype=event_subtype)
         st.write(output_df.to_html(escape=False, index=False, justify='center'), unsafe_allow_html=True)
 
 def show_no_of_events_used(df: pd.DataFrame):
@@ -221,7 +220,7 @@ def dislpay_frequent_words_from_description(df: pd.DataFrame):
     tokens = word_tokenize(text_data)
     # Remove stopwords
     german_stopwords = set(stopwords.words('german'))
-    custom_stopwords = {"br", "href", "s", "u", "S"}
+    custom_stopwords = {"br", "href", "s", "u", "S", "https", "de"}
     german_stopwords.update(custom_stopwords)
     filtered_tokens = [word.lower() for word in tokens if word.lower() not in german_stopwords]
     # Join the filtered tokens back into text
@@ -305,12 +304,11 @@ def visualize_starting_hour_of_events(df: pd.DataFrame):
     # visualize starting hour with line chart
     st.markdown("&nbsp;")
     st.title("Events by Starting Hour 🕰️")
-    df['starting_hour'] = pd.to_datetime(df['starting_hour'])
-    # Count the occurrences of each starting hour
-    starting_hour_counts = df['starting_hour'].dt.hour.value_counts().sort_index()
-
+    # Count the occurrences of each starting hour (starting hour is an integer)
+    starting_hour_counts = df['starting_hour'].value_counts()
+    
     # Use plotly.express to create the line chart
-    fig = px.line(
+    fig = px.bar(
         x=starting_hour_counts.index,
         y=starting_hour_counts.values,
         title='Distribution of Starting Hour',
@@ -341,12 +339,17 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
         subcategory_counts = filtered_df['subcategory'].value_counts()
 
         # Use plotly.express to create the bar chart
-        fig = px.bar(
-            x=subcategory_counts.index,
-            y=subcategory_counts.values,
-            labels={'x': 'Subcategory', 'y': 'Number of Events'},
-            color_discrete_sequence=['green']
-        )
+        try:
+            fig = px.bar(
+                x=subcategory_counts.index,
+                # display y as percentage
+                y=subcategory_counts.values,
+                title=f'Distribution of Subcategories for {supercategory}',
+                labels={'x': 'Subcategory', 'y': 'Number of Events'},
+                color_discrete_sequence=['green']
+            )
+        except ValueError:
+            continue
         
         # Set title for the subplot
         fig.update_layout(title_text=supercategory)
@@ -361,14 +364,14 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 
 def main():
     # Read in the csv-file
-    df = pd.read_csv('data/events_df.csv')
+    df = pd.read_csv('data/all_events.csv')
     display_title()
-    event_type, location_sidebar, season, preferred_time = get_user_preferences()
+    event_type, location_sidebar, season = get_user_preferences()
     # Display the also the subcategories for each supercategory that is selected
     event_subtype = display_subcategories(event_type, df)
     st.write('We will analyze your preferences and show you our recommendations for matching locations in Stuttgart.')
-    selected_tab = st.selectbox("Choose top location or all locations", ["Top 5 Locations", "All Locations", "Informationen zum Datensatz"])
-    if selected_tab == "Informationen zum Datensatz":
+    selected_tab = st.selectbox("Choose top location or all locations", ["Top 5 Locations", "All Locations", "Information about dataset"])
+    if selected_tab == "Information about dataset":
         dislpay_frequent_words_from_description(df)
         generate_activity_type_chart(df)
         generate_activity_type_pie_chart(df)
@@ -381,7 +384,7 @@ def main():
         show_google_maps_stuttgart()
         display_colnames(df)
     else:
-        display_locations(df, selected_tab, event_type, location_sidebar, season, preferred_time, event_subtype)
+        display_locations(df, selected_tab, event_type, location_sidebar, season, event_subtype)
         show_no_of_events_used(df)
         #generate_latitude_longitude_chart(df)
 

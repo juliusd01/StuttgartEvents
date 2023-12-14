@@ -22,7 +22,7 @@ def parse_json(file_path, num_events):
         return limited_events
 
 
-events = parse_json('stuttgart_events.json', 40000)
+events = parse_json('stuttgart_events.json', 264395)
 
 events_df = pd.DataFrame(events)
 all_keys = set().union(*events_df["eventData"].apply(lambda x: x.keys()))
@@ -51,19 +51,19 @@ events_df = events_df.drop('location.location', axis=1)
 events_df = events_df.drop('location.location.address', axis=1)
 
 # Create a heatmap of missing values
-# plt.figure(figsize=(25, 6))  # Adjust the figure size as needed
-# sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
-# plt.title('Missing Values Heatmap')
-#plt.show()
+plt.figure(figsize=(25, 6))  # Adjust the figure size as needed
+sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
+plt.title('Missing Values Heatmap')
+plt.show()
 # drop columns with more than 80% missing values
 events_df = events_df.dropna(thresh=events_df.shape[0]*0.2, axis=1)
 logging.info('Shape of the DataFrame after dropping columns with more than 80% missing values: {}'.format(events_df.shape))
 
 # again plot missing values after cleaning
-# plt.figure(figsize=(15, 6))  # Adjust the figure size as needed
-# sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
-# plt.title('Missing Values Heatmap')
-#plt.show()
+plt.figure(figsize=(15, 6))  # Adjust the figure size as needed
+sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
+plt.title('Missing Values Heatmap')
+plt.show()
 
 # Only keep events that were not cancelled
 events_df = events_df[events_df['cancelled'] == False]
@@ -175,9 +175,13 @@ def extract_categories(df: pd.DataFrame):
     """
     events_df['supercategory'] = np.where(events_df['location.category'].notnull(), events_df['location.category'].str.split('/').str[0], 'anderes')
     events_df['subcategory'] = np.where(events_df['location.category'].notnull(), events_df['location.category'].str.split('/').str[1], 'anderes')
+    # everything to lowercase
+    events_df['supercategory'] = events_df['supercategory'].str.lower()
+    events_df['subcategory'] = events_df['subcategory'].str.lower()
     return events_df
 
 events_df = extract_categories(events_df)
+
 
 # create a column that classifies the events into morning, afternoon and evening
 def get_time_of_day(time: int) -> str:
@@ -208,6 +212,6 @@ plt.show()
 #######################
 # Save DataFrame
 #######################
-events_df.to_csv('events_df.csv', index=False)
+events_df.to_csv('all_events.csv', index=False)
 logger.info('DataFrame saved to csv file.')
 
