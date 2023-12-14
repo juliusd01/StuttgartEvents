@@ -245,6 +245,8 @@ def generate_activity_type_chart(df: pd.DataFrame):
     # Zahlen rechnen
     activity_counts = df['supercategory'].value_counts()
 
+    # only plot the top 10 categories
+    activity_counts = activity_counts[:10]
     # plotly.express
     fig = px.bar(
         x=activity_counts.index,
@@ -386,7 +388,19 @@ def main():
         #show_google_maps_stuttgart()
         display_colnames(df)
     elif selected_tab == "Information about whole dataset":
-        pass
+        # include images
+        st.markdown("&nbsp;")
+        st.title("Information about whole dataset")
+        st.markdown("The wordcloud of the event descriptions shows the most frequent words in the event descriptions of all events in the dataset.")
+        st.image("img/word_cloud_all_events.png", use_column_width=True)
+        st.image('img/distribution_of_activity_type_all_events.png', use_column_width=True)
+        st.markdown('The yellow specifies the rows per column which contain missing values.')
+        st.image('img/Missing_values_all_events.png', use_column_width=True)
+        st.markdown('After cleaning the dataset, e.g. removing columns with more than 80% missing values, the heatmap of missing values looks like this:')
+        st.image('img/missing_values_after_cleaning_all_events.png', use_column_width=True)
+        st.image('img/starting_hour_all_events.png', use_column_width=True)
+        st.image('img/time_of_day_all_events.png', use_column_width=True)
+
     else:
         display_locations(df, selected_tab, event_type, location_sidebar, season, event_subtype, mood)
         show_no_of_events_used(df)
