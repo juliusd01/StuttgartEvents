@@ -9,11 +9,8 @@ import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
 
-# Read your DataFrame with event descriptions
-df = pd.read_csv('data/all_events.csv')  # Replace 'your_dataframe.csv' with your actual file path or URL
-
-
-
+# Read DataFrame with event descriptions
+df = pd.read_csv('data/events_demo.csv')  # Replace 'your_dataframe.csv' with your actual file path or URL
 
 # Get German stop words from NLTK
 german_stop_words = set(stopwords.words('german'))
@@ -41,10 +38,10 @@ predicted_labels = document_topics.argmax(axis=1)
 
 # Map the topic labels to your predefined categories
 topic_labels_mapping = {
-    0: 'Kulturell',
-    1: 'Gesellig',
-    2: 'Musikalisch',
-    3: 'Kreativ',
+    0: 'Lebhaft',
+    1: 'Intim',
+    2: 'Elegant',
+    3: 'Energiegeladen',
     4: 'Anderes'
 }
 
@@ -57,4 +54,4 @@ df['stimmung'] = predicted_category_labels
 # Print or further analyze the predicted category labels
 print(df[['description', 'stimmung']])
 
-df.to_csv('data/all_events.csv', index=False)
+df.to_csv('data/events_demo.csv', index=False)
