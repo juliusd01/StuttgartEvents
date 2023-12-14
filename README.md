@@ -9,6 +9,7 @@ If you can't run the application take a look at the walkthrough of the stramlit 
 ## ToDos
 - Sentiment Analyse
 - Event Description mehr nutzen
+- Bei den Plots für die subcategories der supercategories, relativen Anteil nutzen.
 
 
 ## Präsentation
@@ -16,3 +17,4 @@ If you can't run the application take a look at the walkthrough of the stramlit 
 
 ## Total number of events
 264395
+
