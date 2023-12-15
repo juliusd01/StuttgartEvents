@@ -22,6 +22,7 @@ def display_title():
 # - The location (größeren Viertel von Stuttgart zur Auswahl stellen (durch ZIP Code) )
 
 def get_user_preferences():
+    st.sidebar.title("Dashboard Controls")
     # Create a multiselect widget for the location
     location_sidebar = st.sidebar.multiselect(
         'Which part of Stuttgart do you prefer?',
