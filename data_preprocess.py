@@ -15,15 +15,23 @@ logger = logging.getLogger(__name__)
 #######################
 
 def parse_json(file_path, num_events):
+    """
+    parses the json file and returns a list of events
+
+    :param file_path: path to the json file
+    :param num_events: number of events that should be parsed
+    """
     with open(file_path, 'rb') as f:
         events = ijson.items(f, 'item')
         limited_events = [next(events) for _ in range(num_events)]
         logger.info('All events parsed. Total number of events: {}'.format(len(limited_events)))
         return limited_events
 
+# specify the number of events that should be preprocessed
+num_events = 264395
+events = parse_json('stuttgart_events.json', num_events)
 
-events = parse_json('stuttgart_events.json', 264395)
-
+# Handle the nested structure of the original json file
 events_df = pd.DataFrame(events)
 all_keys = set().union(*events_df["eventData"].apply(lambda x: x.keys()))
 for key in all_keys:
@@ -67,6 +75,9 @@ plt.show()
 
 # Only keep events that were not cancelled
 events_df = events_df[events_df['cancelled'] == False]
+
+# Only keep events where the location is actually in Stuttgart
+events_df = events_df[events_df['location.location.address.city'] == 'Stuttgart']
 
 
 #######################
@@ -192,16 +203,16 @@ def get_time_of_day(time: int) -> str:
     """
     # morning
     if time >= 6 and time < 12:
-        return 'Morning'
+        return 'morning'
     # afternoon
     elif time >= 12 and time < 18:
-        return 'Afternoon'
+        return 'afternoon'
     # evening
     elif time >= 18 and time < 24:
-        return 'Evening'
+        return 'evening'
     # night
     else:
-        return 'Night'
+        return 'night'
     
 # apply the function to the starting_hour column
 events_df['time_of_day'] = events_df['starting_hour'].apply(get_time_of_day)
