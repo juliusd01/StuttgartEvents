@@ -27,7 +27,7 @@ def get_user_preferences():
     location_sidebar = st.sidebar.multiselect(
         'Which part of Stuttgart do you prefer?',
         ["Europaviertel","Relenberg","Karlshöhe","Am Rosensteinpark","Kräherwald","Botnang-West","Vogelsang","Südheim","Bad Cannstatt","Sternhäule","Pfaffenwald","Freiberg","Rosenberg","Uhlandshöhe","Im Geiger","Zuffenhausen-Elbelen","Stöckach","Weinsteige","Heusteigviertel","Neckarvorstadt","Mönchfeld","Waldau","Möhringen-Süd","Feuerbach-Ost","Südheim", "Other"],
-        ["Europaviertel","Relenberg","Karlshöhe","Am Rosensteinpark", "Other"],
+        ["Europaviertel","Relenberg","Karlshöhe","Am Rosensteinpark","Kräherwald","Botnang-West","Vogelsang","Südheim","Bad Cannstatt","Sternhäule","Pfaffenwald","Freiberg","Rosenberg","Uhlandshöhe","Im Geiger","Zuffenhausen-Elbelen","Stöckach","Weinsteige","Heusteigviertel","Neckarvorstadt","Mönchfeld","Waldau","Möhringen-Süd","Feuerbach-Ost","Südheim", "Other"],
     )
 
     # Create a multiselect widget for the season
@@ -40,8 +40,8 @@ def get_user_preferences():
     # Create a multiselect widget for the mood
     mood = st.sidebar.multiselect(
         'What should be the flair of the event?',
-        ['Lebhaft', 'Intim', 'Elegant', 'Energiegeladen', 'Anderes'],
-        ['Lebhaft', 'Intim', 'Elegant', 'Energiegeladen', 'Anderes']
+        ['Elektrisierend', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Informativ'],
+        ['Elektrisierend', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Informativ']
     )
 
     # Create a multiselect widget for the type of event
@@ -369,7 +369,7 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 
 def main():
     # Read in the csv-file
-    df = pd.read_csv('data/events_demo.csv')
+    df = pd.read_csv('data/2000_events_sample.csv')
     display_title()
     event_type, location_sidebar, season, mood = get_user_preferences()
     # Display the also the subcategories for each supercategory that is selected

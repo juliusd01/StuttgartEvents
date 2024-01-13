@@ -27,7 +27,7 @@ def parse_json(file_path, num_events):
         logger.info('All events parsed. Total number of events: {}'.format(len(limited_events)))
         return limited_events
 
-# specify the number of events that should be preprocessed
+# specify the number of events that should be preprocessed, max number of events is 264395
 num_events = 264395
 events = parse_json('stuttgart_events.json', num_events)
 
@@ -59,25 +59,25 @@ events_df = events_df.drop('location.location', axis=1)
 events_df = events_df.drop('location.location.address', axis=1)
 
 # Create a heatmap of missing values
-plt.figure(figsize=(25, 6))  # Adjust the figure size as needed
-sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
-plt.title('Missing Values Heatmap')
-plt.show()
-# drop columns with more than 80% missing values
-events_df = events_df.dropna(thresh=events_df.shape[0]*0.2, axis=1)
-logging.info('Shape of the DataFrame after dropping columns with more than 80% missing values: {}'.format(events_df.shape))
+# plt.figure(figsize=(25, 6))  # Adjust the figure size as needed
+# sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
+# plt.title('Missing Values Heatmap')
+# plt.show()
+# # drop columns with more than 80% missing values
+# events_df = events_df.dropna(thresh=events_df.shape[0]*0.2, axis=1)
+# logging.info('Shape of the DataFrame after dropping columns with more than 80% missing values: {}'.format(events_df.shape))
 
-# again plot missing values after cleaning
-plt.figure(figsize=(15, 6))  # Adjust the figure size as needed
-sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
-plt.title('Missing Values Heatmap')
-plt.show()
+# # again plot missing values after cleaning
+# plt.figure(figsize=(15, 6))  # Adjust the figure size as needed
+# sns.heatmap(events_df.isnull(), cmap='viridis', cbar=False)
+# plt.title('Missing Values Heatmap')
+# plt.show()
 
-# Only keep events that were not cancelled
-events_df = events_df[events_df['cancelled'] == False]
+# # Only keep events that were not cancelled
+# events_df = events_df[events_df['cancelled'] == False]
 
-# Only keep events where the location is actually in Stuttgart
-events_df = events_df[events_df['location.location.address.city'] == 'Stuttgart']
+# # Only keep events where the location is actually in Stuttgart
+# events_df = events_df[events_df['location.location.address.city'] == 'Stuttgart']
 
 
 #######################
@@ -93,6 +93,12 @@ events_df = events_df[events_df['dayofweek'] == 2]
 events_df.reset_index(drop=True, inplace=True)
 # log the number of events remaining
 logging.info('Number of events after filtering for Wednesdays: {}'.format(events_df.shape[0]))
+
+
+# sample the data to reduce the number of events, e.g. only select 2000 events
+events_df = events_df.sample(n=2000, random_state=42)
+events_df.reset_index(drop=True, inplace=True)
+logging.info('Number of events after sampling: {}'.format(events_df.shape[0]))
 
 # Create year column
 events_df['year'] = events_df['startDate'].dt.year
@@ -223,6 +229,6 @@ plt.show()
 #######################
 # Save DataFrame
 #######################
-events_df.to_csv('all_events.csv', index=False)
+events_df.to_csv('2000_events_sample.csv', index=False)
 logger.info('DataFrame saved to csv file.')
 
