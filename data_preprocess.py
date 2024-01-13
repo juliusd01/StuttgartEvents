@@ -1,10 +1,7 @@
-import json
 import pandas as pd
-from pandas import json_normalize
 import matplotlib.pyplot as plt
 import ijson
 import logging
-import seaborn as sns
 import numpy as np
 
 logging.basicConfig(level=logging.INFO)
