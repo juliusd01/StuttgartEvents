@@ -42,10 +42,6 @@ document_topics = lda.fit_transform(X)
 # Get the most probable topic for each document (event)
 predicted_labels = document_topics.argmax(axis=1)
 
-# visualize the topics
-pyLDAvis.enable_notebook()
-panel = pyLDAvis.lda_model.prepare(lda, X, vectorizer, mds='tsne')
-
 def print_top_words(model, feature_names, n_top_words):
     for topic_idx, topic in enumerate(model.components_):
         message = f"Topic #{topic_idx}: "
@@ -63,7 +59,7 @@ print_top_words(lda, tf_feature_names, n_top_words)
 # Topic #2: stuttgart de anmeldung sowie www fragen veranstaltung bitte baden württemberg
 # Topic #3: musik live band tour www mal album up ganz jazz
 # Topic #4: uhr stuttgart 00 de www mittwoch 30 ab 19 20
-exit()
+
 # Map the topic labels to your predefined categories
 topic_labels_mapping = {
     0: 'Lebhaft',
@@ -82,4 +78,4 @@ df['stimmung'] = predicted_category_labels
 # Print or further analyze the predicted category labels
 print(df[['description', 'stimmung']])
 
-df.to_csv('data/2000_events_sample.csv', index=False)
+df.to_csv('2000_events_sample.csv', index=False)

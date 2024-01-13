@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import matplotlib.pyplot as plt
 import plotly.express as px
+import statistics
 
 def display_title():
     # Create a title for the dashboard
@@ -40,35 +41,38 @@ def get_user_preferences():
     # Create a multiselect widget for the mood
     mood = st.sidebar.multiselect(
         'What should be the flair of the event?',
-        ['Elektrisierend', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Informativ'],
-        ['Elektrisierend', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Informativ']
+        ['Energetisch', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Unterhaltsam'],
+        ['Energetisch', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Unterhaltsam']
     )
 
     # Create a multiselect widget for the type of event
     event_type = st.sidebar.multiselect(
         'Which type of event do you prefer?',
-        ['kultur', 'party', 'restaurant', 'stadtleben', 'church', 'shopping', 'food', 'health', 'anderes'],
+        ["restaurant", "performance & event venue", "public figure", "dance & night club", "bar", "anderes", "church", "university", "performance art theatre", "local business", "club", "arts", "library", "museum", "education", "business services", "government organization", "arts & entertainment", "non-profit organization", "community organization", "bookstore", "non-governmental organization (ngo)", "company", "sports"],
         []
     )
 
     return event_type, location_sidebar, season, mood
 
 
-def display_subcategories(event_types: list, df: pd.DataFrame):
+def display_subcategories(event_types: list, df: pd.DataFrame, default_value='No Subcategory'):
     subcategories = []
     for event_type in event_types:
         subcategory = df[df['supercategory'] == event_type]['subcategory'].unique()
         # remove nan from subcategories
         subcategory = subcategory[~pd.isnull(subcategory)]
         subcategories.extend(subcategory)
+    # If there are no subcategories, use the default value
+    if not subcategories:
+        subcategories = [default_value]
+    print(subcategories)
     # Create a multiselect widget for the subtype of event
-    if subcategories is not None:
-        event_subtype = st.sidebar.multiselect(
-            'Which genre of event do you prefer?',
-            subcategories,
-            []
-        )
-        return event_subtype
+    event_subtype = st.sidebar.multiselect(
+        'Which genre of event do you prefer?',
+        subcategories,
+        []
+    )
+    return event_subtype
 
 
 def create_link_to_GoogleMaps(row):
@@ -86,7 +90,7 @@ def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, lo
     :param event_subtype: list of event subtypes that the user selected
     :param mood: list of moods that the user selected
     """
-    sub_df = df[df['season'].isin(season) & df['district'].isin(location_sidebar) & df['supercategory'].isin(event_type) & df['subcategory'].isin(event_subtype) & df['stimmung'].isin(mood)]
+    sub_df = df[df['season'].isin(season) & df['district'].isin(location_sidebar) & df['supercategory'].isin(event_type) & (df['subcategory'].isin(event_subtype) | (df['subcategory'] == "")) & df['stimmung'].isin(mood)]
     # Only select the relevant columns
     sub_df = sub_df[['name', 'description', 'location.name', 'location.location.address.street', 'supercategory', 'subcategory', 'stimmung']]
     sub_df.columns = ['Event', 'Description', 'Location', 'Address', 'Type', 'Category', 'Flair']
@@ -94,9 +98,14 @@ def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, lo
     location_dict = {}
     for index, row in sub_df.iterrows():
         if row['Location'] not in location_dict:
-            location_dict[row['Location']] = [row['Address'], row['Type'], row['Category'], row['Flair'], 1]
+            location_dict[row['Location']] = [row['Address'], row['Type'], row['Category'], [row['Flair']], 1]
         else:
+            location_dict[row['Location']][3].append(row['Flair'])
             location_dict[row['Location']][4] += 1
+
+    # After creating the dictionary, find the most common flair for each location
+    for location in location_dict:
+        location_dict[location][3] = statistics.mode(location_dict[location][3])
     # count number of events per location
     events_per_location_count_df = sub_df.groupby(['Location']).count()
     # sort by number of events per location
@@ -369,7 +378,7 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 
 def main():
     # Read in the csv-file
-    df = pd.read_csv('data/2000_events_sample.csv')
+    df = pd.read_csv('data/2000_events_sample_notebook.csv')
     display_title()
     event_type, location_sidebar, season, mood = get_user_preferences()
     # Display the also the subcategories for each supercategory that is selected
