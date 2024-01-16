@@ -93,9 +93,9 @@ logging.info('Number of events after filtering for Wednesdays: {}'.format(events
 
 
 # sample the data to reduce the number of events, e.g. only select 2000 events
-events_df = events_df.sample(n=2000, random_state=42)
-events_df.reset_index(drop=True, inplace=True)
-logging.info('Number of events after sampling: {}'.format(events_df.shape[0]))
+# events_df = events_df.sample(n=2000, random_state=42)
+# events_df.reset_index(drop=True, inplace=True)
+# logging.info('Number of events after sampling: {}'.format(events_df.shape[0]))
 
 # Create year column
 events_df['year'] = events_df['startDate'].dt.year
@@ -228,6 +228,6 @@ plt.show()
 #######################
 # Save DataFrame
 #######################
-events_df.to_csv('2000_events_sample.csv', index=False)
+events_df.to_csv('all_events.csv', index=False)
 logger.info('DataFrame saved to csv file.')
 

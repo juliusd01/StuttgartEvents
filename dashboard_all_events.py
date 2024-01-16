@@ -41,8 +41,8 @@ def get_user_preferences():
     # Create a multiselect widget for the mood
     mood = st.sidebar.multiselect(
         'What should be the flair of the event?',
-        ['Energetisch', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Unterhaltsam'],
-        ['Energetisch', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Unterhaltsam']
+        ['Musikalisch', 'Informativ', 'Entspannt', 'Feierlich', 'Energiegeladen'],
+        ['Musikalisch', 'Informativ', 'Entspannt', 'Feierlich', 'Energiegeladen']
     )
 
     # Create a multiselect widget for the type of event
@@ -382,7 +382,7 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 
 def main():
     # Read in the csv-file
-    df = pd.read_csv('data/2000_events_sample_notebook.csv')
+    df = pd.read_csv('data/all_events.csv')
     display_title()
     event_type, location_sidebar, season, mood = get_user_preferences()
     # Display the also the subcategories for each supercategory that is selected
