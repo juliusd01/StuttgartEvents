@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import matplotlib.pyplot as plt
 import plotly.express as px
+import statistics
 
 def display_title():
     # Create a title for the dashboard
@@ -27,7 +28,7 @@ def get_user_preferences():
     location_sidebar = st.sidebar.multiselect(
         'Which part of Stuttgart do you prefer?',
         ["Europaviertel","Relenberg","Karlshöhe","Am Rosensteinpark","Kräherwald","Botnang-West","Vogelsang","Südheim","Bad Cannstatt","Sternhäule","Pfaffenwald","Freiberg","Rosenberg","Uhlandshöhe","Im Geiger","Zuffenhausen-Elbelen","Stöckach","Weinsteige","Heusteigviertel","Neckarvorstadt","Mönchfeld","Waldau","Möhringen-Süd","Feuerbach-Ost","Südheim", "Other"],
-        ["Europaviertel","Relenberg","Karlshöhe","Am Rosensteinpark", "Other"],
+        ["Europaviertel","Relenberg","Karlshöhe","Am Rosensteinpark","Kräherwald","Botnang-West","Vogelsang","Südheim","Bad Cannstatt","Sternhäule","Pfaffenwald","Freiberg","Rosenberg","Uhlandshöhe","Im Geiger","Zuffenhausen-Elbelen","Stöckach","Weinsteige","Heusteigviertel","Neckarvorstadt","Mönchfeld","Waldau","Möhringen-Süd","Feuerbach-Ost","Südheim", "Other"],
     )
 
     # Create a multiselect widget for the season
@@ -40,35 +41,38 @@ def get_user_preferences():
     # Create a multiselect widget for the mood
     mood = st.sidebar.multiselect(
         'What should be the flair of the event?',
-        ['Lebhaft', 'Intim', 'Elegant', 'Energiegeladen', 'Anderes'],
-        ['Lebhaft', 'Intim', 'Elegant', 'Energiegeladen', 'Anderes']
+        ['Energetisch', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Unterhaltsam'],
+        ['Energetisch', 'Gesellig', 'Körperbewusst', 'Künstlerisch', 'Unterhaltsam']
     )
 
     # Create a multiselect widget for the type of event
     event_type = st.sidebar.multiselect(
         'Which type of event do you prefer?',
-        ['kultur', 'party', 'restaurant', 'stadtleben', 'church', 'shopping', 'food', 'health', 'anderes'],
+        ["restaurant", "kultur", "party", "performance & event venue", "public figure", "dance & night club", "bar", "anderes", "church", "university", "performance art theatre", "local business", "club", "arts", "library", "museum", "education", "business services", "government organization", "arts & entertainment", "non-profit organization", "community organization", "bookstore", "non-governmental organization (ngo)", "company", "sports"],
         []
     )
 
     return event_type, location_sidebar, season, mood
 
 
-def display_subcategories(event_types: list, df: pd.DataFrame):
+def display_subcategories(event_types: list, df: pd.DataFrame, default_value='No Subcategory'):
     subcategories = []
     for event_type in event_types:
         subcategory = df[df['supercategory'] == event_type]['subcategory'].unique()
         # remove nan from subcategories
         subcategory = subcategory[~pd.isnull(subcategory)]
         subcategories.extend(subcategory)
+    # If there are no subcategories, use the default value
+    if not subcategories:
+        subcategories = [default_value]
+    print(subcategories)
     # Create a multiselect widget for the subtype of event
-    if subcategories is not None:
-        event_subtype = st.sidebar.multiselect(
-            'Which genre of event do you prefer?',
-            subcategories,
-            []
-        )
-        return event_subtype
+    event_subtype = st.sidebar.multiselect(
+        'Which genre of event do you prefer?',
+        subcategories,
+        []
+    )
+    return event_subtype
 
 
 def create_link_to_GoogleMaps(row):
@@ -86,7 +90,7 @@ def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, lo
     :param event_subtype: list of event subtypes that the user selected
     :param mood: list of moods that the user selected
     """
-    sub_df = df[df['season'].isin(season) & df['district'].isin(location_sidebar) & df['supercategory'].isin(event_type) & df['subcategory'].isin(event_subtype) & df['stimmung'].isin(mood)]
+    sub_df = df[df['season'].isin(season) & df['district'].isin(location_sidebar) & df['supercategory'].isin(event_type) & (df['subcategory'].isin(event_subtype) | (df['subcategory'] == "")) & df['stimmung'].isin(mood)]
     # Only select the relevant columns
     sub_df = sub_df[['name', 'description', 'location.name', 'location.location.address.street', 'supercategory', 'subcategory', 'stimmung']]
     sub_df.columns = ['Event', 'Description', 'Location', 'Address', 'Type', 'Category', 'Flair']
@@ -94,9 +98,18 @@ def prepare_sub_df_for_output(df: pd.DataFrame, top5: bool, event_type: list, lo
     location_dict = {}
     for index, row in sub_df.iterrows():
         if row['Location'] not in location_dict:
-            location_dict[row['Location']] = [row['Address'], row['Type'], row['Category'], row['Flair'], 1]
+            location_dict[row['Location']] = [row['Address'], [row['Type']], [row['Category']], [row['Flair']], 1]
         else:
+            location_dict[row['Location']][3].append(row['Flair'])
+            location_dict[row['Location']][2].append(row['Category'])
+            location_dict[row['Location']][1].append(row['Type'])
             location_dict[row['Location']][4] += 1
+
+    # After creating the dictionary, find the most common flair, type and category for each location. This will be displayed in the dashboard
+    for location in location_dict:
+        location_dict[location][3] = statistics.mode(location_dict[location][3])
+        location_dict[location][2] = statistics.mode(location_dict[location][2])
+        location_dict[location][1] = statistics.mode(location_dict[location][1])
     # count number of events per location
     events_per_location_count_df = sub_df.groupby(['Location']).count()
     # sort by number of events per location
@@ -369,7 +382,7 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 
 def main():
     # Read in the csv-file
-    df = pd.read_csv('data/events_demo.csv')
+    df = pd.read_csv('data/2000_events_sample_notebook.csv')
     display_title()
     event_type, location_sidebar, season, mood = get_user_preferences()
     # Display the also the subcategories for each supercategory that is selected
@@ -378,29 +391,33 @@ def main():
     selected_tab = st.selectbox("Choose top location or all locations", ["Top 5 Locations", "All Locations", "Information about subset of dataset", 'Information about whole dataset'])
     if selected_tab == "Information about subset of dataset":
         dislpay_frequent_words_from_description(df)
-        generate_activity_type_chart(df)
-        generate_activity_type_pie_chart(df)
-        visualize_subcategory_by_supercategory(df)
-        visualize_starting_hour_of_events(df)
-        visualize_time_of_day(df)
-        generate_activity_time_chart(df)
-        show_no_of_events_used(df)
-        #generate_latitude_longitude_chart(df)
-        #show_google_maps_stuttgart()
-        display_colnames(df)
+        expander1 = st.expander("Click to see more information about the dataset")
+        with expander1:
+            generate_activity_type_chart(df)
+            generate_activity_type_pie_chart(df)
+            visualize_subcategory_by_supercategory(df)
+            visualize_starting_hour_of_events(df)
+            visualize_time_of_day(df)
+            generate_activity_time_chart(df)
+            show_no_of_events_used(df)
+            #generate_latitude_longitude_chart(df)
+            #show_google_maps_stuttgart()
+            display_colnames(df)
     elif selected_tab == "Information about whole dataset":
         # include images
         st.markdown("&nbsp;")
         st.title("Information about whole dataset")
         st.markdown("The wordcloud of the event descriptions shows the most frequent words in the event descriptions of all events in the dataset.")
         st.image("img/word_cloud_all_events.png", use_column_width=True)
-        st.image('img/distribution_of_activity_type_all_events.png', use_column_width=True)
-        st.markdown('The yellow specifies the rows per column which contain missing values.')
-        st.image('img/Missing_values_all_events.png', use_column_width=True)
-        st.markdown('After cleaning the dataset, e.g. removing columns with more than 80% missing values, the heatmap of missing values looks like this:')
-        st.image('img/missing_values_after_cleaning_all_events.png', use_column_width=True)
-        st.image('img/starting_hour_all_events.png', use_column_width=True)
-        st.image('img/time_of_day_all_events.png', use_column_width=True)
+        expander2 = st.expander("Click to see more information about the whole dataset")
+        with expander2:
+            st.image('img/distribution_of_activity_type_all_events.png', use_column_width=True)
+            st.markdown('The yellow specifies the rows per column which contain missing values.')
+            st.image('img/Missing_values_all_events.png', use_column_width=True)
+            st.markdown('After cleaning the dataset, e.g. removing columns with more than 80% missing values, the heatmap of missing values looks like this:')
+            st.image('img/missing_values_after_cleaning_all_events.png', use_column_width=True)
+            st.image('img/starting_hour_all_events.png', use_column_width=True)
+            st.image('img/time_of_day_all_events.png', use_column_width=True)
 
     else:
         display_locations(df, selected_tab, event_type, location_sidebar, season, event_subtype, mood)
@@ -411,7 +428,7 @@ def main():
 
 
     st.markdown('&nbsp;')
-    st.markdown('<div style="text-align:center;">Copyright © 2023 Julius Döbelt and Haoran Huang. All rights reserved.</div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align:center;">Copyright © 2024 Julius Döbelt and Haoran Huang. All rights reserved.</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
