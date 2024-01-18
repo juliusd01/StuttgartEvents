@@ -8,7 +8,8 @@ Have fun playing with the dashboard!
 ```sh
 conda env create -f environment.yml
 conda activate decoob
-streamlit run dashboard2.py
+streamlit run dashboard_demo.py
 ```
 
-
+## Reproduce Data Preparation
+Include the stuutgart_events.json into the deccob directory and run the **step-by-step-walkthrough.ipynb**. (And I know that deccob is spelled differently 😄)
