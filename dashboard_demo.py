@@ -22,7 +22,7 @@ def display_title():
 # - The type of event (concert, party, singer in a bar, ...)
 # - The location (größeren Viertel von Stuttgart zur Auswahl stellen (durch ZIP Code) )
 
-def get_user_preferences():
+def get_user_preferences(supercategories: list):
     st.sidebar.title("Dashboard Controls")
     # Create a multiselect widget for the location
     location_sidebar = st.sidebar.multiselect(
@@ -48,8 +48,10 @@ def get_user_preferences():
     # Create a multiselect widget for the type of event
     event_type = st.sidebar.multiselect(
         'Which type of event do you prefer?',
-        ["restaurant", "kultur", "party", "performance & event venue", "public figure", "dance & night club", "bar", "anderes", "church", "university", "performance art theatre", "local business", "club", "arts", "library", "museum", "education", "business services", "government organization", "arts & entertainment", "non-profit organization", "community organization", "bookstore", "non-governmental organization (ngo)", "company", "sports"],
-        []
+        # Use below line if all supercategories should be displayed
+        # options = [supercategory for supercategory in supercategories],
+        options = ["restaurant", "kultur", "party", "performance & event venue", "public figure", "dance & night club", "bar", "anderes", "church", "university", "performance art theatre", "local business", "club", "arts", "library", "museum", "education", "business services", "government organization", "arts & entertainment", "non-profit organization", "community organization", "bookstore", "non-governmental organization (ngo)", "company", "sports"],
+        default = []
     )
 
     return event_type, location_sidebar, season, mood
@@ -58,10 +60,12 @@ def get_user_preferences():
 def display_subcategories(event_types: list, df: pd.DataFrame, default_value='No Subcategory'):
     subcategories = []
     for event_type in event_types:
-        subcategory = df[df['supercategory'] == event_type]['subcategory'].unique()
+        unique_subcategories = df[df['supercategory'] == event_type]['subcategory'].unique()
         # remove nan from subcategories
-        subcategory = subcategory[~pd.isnull(subcategory)]
-        subcategories.extend(subcategory)
+        unique_subcategories = unique_subcategories[~pd.isnull(unique_subcategories)]
+        for subcategory in unique_subcategories:
+            if subcategory not in subcategories:
+                subcategories.append(subcategory)
     # If there are no subcategories, use the default value
     if not subcategories:
         subcategories = [default_value]
@@ -383,8 +387,10 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 def main():
     # Read in the csv-file
     df = pd.read_csv('data/2000_events_sample_notebook.csv')
+    unique_supercategories = df["supercategory"].unique()
+    print(df.shape)
     display_title()
-    event_type, location_sidebar, season, mood = get_user_preferences()
+    event_type, location_sidebar, season, mood = get_user_preferences(unique_supercategories)
     # Display the also the subcategories for each supercategory that is selected
     event_subtype = display_subcategories(event_type, df)
     st.write('We will analyze your preferences and show you our recommendations for matching locations in Stuttgart.')

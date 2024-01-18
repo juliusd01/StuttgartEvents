@@ -382,7 +382,8 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 
 def main():
     # Read in the csv-file
-    df = pd.read_csv('data/all_events.csv')
+    df = pd.read_csv('data/all_events_dashboard.csv')
+    print(df.shape)
     display_title()
     event_type, location_sidebar, season, mood = get_user_preferences()
     # Display the also the subcategories for each supercategory that is selected
