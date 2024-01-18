@@ -395,7 +395,9 @@ def main():
         with expander1:
             generate_activity_type_chart(df)
             generate_activity_type_pie_chart(df)
-            visualize_subcategory_by_supercategory(df)
+            # We excplicitly chose not to use percentages for each subcategory because most of the supercategory only have 
+            # one subcategory.
+            # visualize_subcategory_by_supercategory(df)
             visualize_starting_hour_of_events(df)
             visualize_time_of_day(df)
             generate_activity_time_chart(df)

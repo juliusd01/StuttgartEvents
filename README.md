@@ -9,18 +9,4 @@ conda activate decoob
 streamlit run dashboard2.py
 ```
 
-## Video
-If you can't run the application take a look at the walkthrough of the stramlit application at https://youtu.be/Oi3mRMuW7Xk (05.11.2023). 
-
-## ToDos
-- Sentiment Analyse
-- Event Description mehr nutzen
-- Bei den Plots für die subcategories der supercategories, relativen Anteil nutzen.
-
-
-## Präsentation
-- plots für das gesamte dataset zeigen, nicht nur subset
-
-## Total number of events
-264395
-
+## 
