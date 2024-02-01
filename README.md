@@ -19,6 +19,7 @@ Alternatively one could install all dependencies using pip.
 Include the stutgart_events.json into the deccob directory and run the **step-by-step-walkthrough.ipynb**. (And I know that deccob is spelled differently 😄)
 
 ## Content of the repository
+```
 📦Decoob
  ┣ 📂.streamlit
  ┃ ┗ 📜config.toml                                          # Configuration file for streamlite dashboard
@@ -57,3 +58,4 @@ Include the stutgart_events.json into the deccob directory and run the **step-by
  ┣ 📜requirements.txt                                       # dependencies
  ┣ 📜step-by-step-walkthrough.ipynb                         # See most of our programming steps in one notebook
  ┗ 📜stuttgart_events.json                                  # This file should be inserted to be able to run the jupyter notebook above 
+```
