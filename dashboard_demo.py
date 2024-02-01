@@ -206,7 +206,7 @@ def display_colnames(df: pd.DataFrame):
     # Assuming df is your DataFrame
     df = df
     # List of columns created by feature engineering
-    feature_engineering_cols = ['dayofweek', 'year', 'month', 'season', 'district', 'supercategory', 'subcategory', 'starting_hour', 'time_of_day']
+    feature_engineering_cols = ['dayofweek', 'year', 'month', 'season', 'district', 'supercategory', 'subcategory', 'starting_hour', 'time_of_day', 'stimmung']
     # Display a title
     st.title('Columns used for creating dashboard:')
     # Create a frame for all columns
@@ -408,7 +408,7 @@ def main():
             visualize_time_of_day(df)
             generate_activity_time_chart(df)
             show_no_of_events_used(df)
-            #generate_latitude_longitude_chart(df)
+            # generate_latitude_longitude_chart(df)         
             #show_google_maps_stuttgart()
             display_colnames(df)
     elif selected_tab == "Information about whole dataset":
