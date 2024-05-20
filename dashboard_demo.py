@@ -386,7 +386,7 @@ def visualize_subcategory_by_supercategory(df: pd.DataFrame):
 
 def main():
     # Read in the csv-file
-    df = pd.read_csv('data/2000_events_sample_notebook.csv')
+    df = pd.read_csv('data/2000_events_sample.csv')
     unique_supercategories = df["supercategory"].unique()
     print(df.shape)
     display_title()
