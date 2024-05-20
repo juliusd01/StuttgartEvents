@@ -1,5 +1,7 @@
-# deccob
-Analysing event data for Stuttgart
+# Analysing event data for Stuttgart
+
+Visit: https://stuttgart-events.streamlit.app/
+
 
 ## Main Question to answer: Where in Stuttgart is a good place to go out at wednesdays?
 Have fun playing with the dashboard!
@@ -14,9 +16,6 @@ streamlit run dashboard_demo.py
 streamlit run dashboard_all_events.py
 ```
 Alternatively one could install all dependencies using pip.
-
-## Reproduce Data Preparation
-Include the stutgart_events.json into the deccob directory and run the **step-by-step-walkthrough.ipynb**. (And I know that deccob is spelled differently 😄)
 
 ## Content of the repository
 ```
@@ -53,7 +52,7 @@ Include the stutgart_events.json into the deccob directory and run the **step-by
  ┣ 📜LICENSE
  ┣ 📜README.md
  ┣ 📜dashboard_all_events.py                                # dashboard with all events
- ┣ 📜dashboard_demo.py                                      # dashboard with only 2000 samled events
+ ┣ 📜dashboard_demo.py                                      # dashboard with only 2000 sampled events
  ┣ 📜environment.yml
  ┣ 📜requirements.txt                                       # dependencies
  ┣ 📜step-by-step-walkthrough.ipynb                         # See most of our programming steps in one notebook
