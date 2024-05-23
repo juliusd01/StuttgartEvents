@@ -22,13 +22,6 @@ Alternatively one could install all dependencies using pip.
 📦Decoob
  ┣ 📂.streamlit
  ┃ ┗ 📜config.toml                                          # Configuration file for streamlite dashboard
- ┣ 📂archive                                                # The archive contains stale code, this can be ignored
- ┃ ┣ 📜NLP_cluster.py
- ┃ ┣ 📜data_preprocess.py
- ┃ ┣ 📜example.json
- ┃ ┣ 📜mood_classification.py
- ┃ ┣ 📜outdated_dashboard.py
- ┃ ┗ 📜test.py
  ┣ 📂data                                                   # The preprocessed data for the dashboards
  ┃ ┣ 📜2000_events_sample.csv
  ┃ ┗ 📜all_events_dashboard.csv
